@@ -2,7 +2,9 @@ use crate::note::{
     Note, Scale, ScaleStep, ALL_NOTES, ALL_SCALES, ALL_SCALES_WEIGHTED, ALL_SCALE_STEPS,
     SCALE_STEPS_WEIGHTS,
 };
-use egui::Ui;
+use egui::FontFamily::Proportional;
+use egui::TextStyle::*;
+use egui::{FontId, Ui};
 use rand::{
     distributions::WeightedIndex, prelude::Distribution, rngs::ThreadRng, seq::SliceRandom,
 };
@@ -21,11 +23,26 @@ pub struct MyEguiApp {
 }
 
 impl MyEguiApp {
-    pub fn new(_cc: &eframe::CreationContext<'_>) -> Self {
+    pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
         // Restore app state using cc.storage (requires the "persistence" feature).
         // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
         // for e.g. egui::PaintCallback.
+
+        if let Some(storage) = cc.storage {
+            return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
+        }
+
+        let ctx = egui::Context::default();
+        let mut style: egui::Style = (*ctx.style()).clone();
+        style.text_styles = [
+            (Heading, FontId::new(30.0, Proportional)),
+            (Body, FontId::new(24.0, Proportional)),
+            (Button, FontId::new(24.0, Proportional)),
+        ]
+        .into();
+
+        cc.egui_ctx.set_style(style);
         Self::default()
     }
 
@@ -48,7 +65,7 @@ impl MyEguiApp {
     }
 
     fn add_option_button(&mut self, ui: &mut Ui, id: usize) {
-        const BUTTON_SIZE: [f32; 2] = [50., 20.];
+        const BUTTON_SIZE: [f32; 2] = [80., 40.];
         if ui
             .add_sized(
                 BUTTON_SIZE,
