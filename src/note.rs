@@ -1,6 +1,7 @@
 use std::fmt::Display;
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(serde::Deserialize, serde::Serialize)]
 pub enum BaseNote {
     A,
     B,
@@ -31,6 +32,7 @@ impl Display for BaseNote {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(serde::Deserialize, serde::Serialize)]
 pub enum Modifier {
     #[default]
     None,
@@ -53,6 +55,7 @@ impl Display for Modifier {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(serde::Deserialize, serde::Serialize)]
 pub struct Note {
     pub base_note: BaseNote,
     pub modifier: Modifier,
@@ -65,6 +68,7 @@ impl Display for Note {
 }
 
 #[derive(Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Default)]
+#[derive(serde::Deserialize, serde::Serialize)]
 pub enum ScaleStep {
     #[default]
     First,

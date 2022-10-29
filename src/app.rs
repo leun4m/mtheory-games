@@ -8,8 +8,8 @@ use rand::{
 };
 
 /// We derive Deserialize/Serialize so we can persist app state on shutdown.
-// #[derive(serde::Deserialize, serde::Serialize)]
-// #[serde(default)] // if we add new fields, give them default values when deserializing old state
+#[derive(serde::Deserialize, serde::Serialize)]
+#[serde(default)] // if we add new fields, give them default values when deserializing old state
 #[derive(Default)]
 pub struct MyEguiApp {
     status: String,
@@ -18,7 +18,6 @@ pub struct MyEguiApp {
     step: ScaleStep,
     scale: Scale,
     option: [Note; 4],
-    rng: ThreadRng,
 }
 
 impl MyEguiApp {
@@ -40,10 +39,11 @@ impl MyEguiApp {
     }
 
     fn next_note(&mut self) {
-        self.scale = random_scale(&mut self.rng);
+        let mut rng = rand::thread_rng();
+        self.scale = random_scale(&mut rng);
         self.key = self.scale[0];
-        self.step = random_scale_step(&mut self.rng);
-        self.option = random_notes(self.scale[self.step.ord()], &mut self.rng);
+        self.step = random_scale_step(&mut rng);
+        self.option = random_notes(self.scale[self.step.ord()], &mut rng);
         self.correct_answer = self.scale[self.step.ord()];
     }
 
@@ -69,7 +69,6 @@ impl eframe::App for MyEguiApp {
 
             if ui.button("Start").clicked() {
                 self.status = "Starting...".to_string();
-                self.rng = rand::thread_rng();
                 self.next_note();
             }
 
