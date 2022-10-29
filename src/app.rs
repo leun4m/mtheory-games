@@ -119,13 +119,11 @@ impl eframe::App for MyEguiApp {
                     self.add_option_button(ui, 2);
                     self.add_option_button(ui, 3);
                 });
-            } else {
-                if ui.button("Start").clicked() {
-                    self.status = "Starting...".to_string();
-                    self.start = Some(Local::now());
-                    self.next_note();
-                    self.is_running = true;
-                }
+            } else if ui.button("Start").clicked() {
+                self.status = "Starting...".to_string();
+                self.start = Some(Local::now());
+                self.next_note();
+                self.is_running = true;
             }
         });
     }
