@@ -91,7 +91,7 @@ impl MyEguiApp {
     fn calc_time(&mut self) {
         self.time_left = if let Some(start) = self.start {
             let aim = start + Duration::seconds(SECONDS_PER_GAME);
-            (aim.timestamp() - Local::now().timestamp()) as f32 / 10.0
+            (aim.timestamp() - Local::now().timestamp()) as f32 / SECONDS_PER_GAME as f32
         } else {
             0.0
         };
