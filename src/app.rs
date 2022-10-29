@@ -2,9 +2,10 @@ use crate::note::{
     Note, Scale, ScaleStep, ALL_NOTES, ALL_SCALES, ALL_SCALES_WEIGHTED, ALL_SCALE_STEPS,
     SCALE_STEPS_WEIGHTS,
 };
+use chrono::{DateTime, Duration, Local};
 use egui::FontFamily::Proportional;
-use egui::TextStyle::*;
 use egui::{FontId, Ui};
+use egui::{ProgressBar, TextStyle::*};
 use rand::{
     distributions::WeightedIndex, prelude::Distribution, rngs::ThreadRng, seq::SliceRandom,
 };
@@ -20,15 +21,13 @@ pub struct MyEguiApp {
     step: ScaleStep,
     scale: Scale,
     option: [Note; 4],
+    start: Option<DateTime<Local>>,
+    time_left: f32,
+    is_running: bool,
 }
 
 impl MyEguiApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        // Customize egui here with cc.egui_ctx.set_fonts and cc.egui_ctx.set_visuals.
-        // Restore app state using cc.storage (requires the "persistence" feature).
-        // Use the cc.gl (a glow::Context) to create graphics shaders and buffers that you can use
-        // for e.g. egui::PaintCallback.
-
         if let Some(storage) = cc.storage {
             return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
         }
@@ -76,27 +75,48 @@ impl MyEguiApp {
             self.handle_answer(self.option[id]);
         }
     }
+
+    fn calc_time(&mut self) {
+        self.time_left = if let Some(start) = self.start {
+            let aim = start + Duration::seconds(SECONDS_PER_GAME);
+            (aim.timestamp() - Local::now().timestamp()) as f32 / 10.0
+        } else {
+            0.0
+        };
+
+        self.is_running = self.time_left > 0.0;
+    }
 }
+
+const SECONDS_PER_GAME: i64 = 10;
 
 impl eframe::App for MyEguiApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
+        self.calc_time();
+
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("mTheory Quiz!");
             ui.label(&self.status);
 
-            if ui.button("Start").clicked() {
-                self.status = "Starting...".to_string();
-                self.next_note();
+            if self.is_running {
+                self.status = String::new();
+                ui.add(ProgressBar::new(self.time_left).animate(true));
+                ui.label(format!("Key: {}", self.key));
+                ui.label(format!("Step {}", self.step));
+                ui.horizontal(|ui| {
+                    self.add_option_button(ui, 0);
+                    self.add_option_button(ui, 1);
+                    self.add_option_button(ui, 2);
+                    self.add_option_button(ui, 3);
+                });
+            } else {
+                if ui.button("Start").clicked() {
+                    self.status = "Starting...".to_string();
+                    self.start = Some(Local::now());
+                    self.next_note();
+                    self.is_running = true;
+                }
             }
-
-            ui.label(format!("Key: {}", self.key));
-            ui.label(format!("Step {}", self.step));
-            ui.horizontal(|ui| {
-                self.add_option_button(ui, 0);
-                self.add_option_button(ui, 1);
-                self.add_option_button(ui, 2);
-                self.add_option_button(ui, 3);
-            })
         });
     }
 }
