@@ -24,7 +24,12 @@ pub struct MyEguiApp {
     start: Option<DateTime<Local>>,
     time_left: f32,
     is_running: bool,
+    score: i32,
 }
+
+const POINTS_ON_CORRECT: i32 = 1;
+const POINTS_ON_MISTAKE: i32 = -3;
+const SECONDS_PER_GAME: i64 = 60;
 
 impl MyEguiApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
@@ -48,9 +53,16 @@ impl MyEguiApp {
     fn handle_answer(&mut self, note: Note) {
         if note == self.correct_answer {
             self.status = "Richtig".into();
+            self.score += POINTS_ON_CORRECT;
         } else {
             self.status = format!("Falsch, (Richtig wäre: {})", self.correct_answer);
+            self.score += POINTS_ON_MISTAKE;
         }
+
+        if self.score < 0 {
+            self.score = 0;
+        }
+
         self.next_note();
     }
 
@@ -64,7 +76,7 @@ impl MyEguiApp {
     }
 
     fn add_option_button(&mut self, ui: &mut Ui, id: usize) {
-        const BUTTON_SIZE: [f32; 2] = [80., 40.];
+        const BUTTON_SIZE: [f32; 2] = [80.0, 40.0];
         if ui
             .add_sized(
                 BUTTON_SIZE,
@@ -88,18 +100,16 @@ impl MyEguiApp {
     }
 }
 
-const SECONDS_PER_GAME: i64 = 10;
-
 impl eframe::App for MyEguiApp {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         self.calc_time();
 
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("mTheory Quiz!");
+            ui.label(format!("Score: {}", self.score));
             ui.label(&self.status);
 
             if self.is_running {
-                self.status = String::new();
                 ui.add(ProgressBar::new(self.time_left).animate(true));
                 ui.label(format!("Key: {}", self.key));
                 ui.label(format!("Step {}", self.step));
