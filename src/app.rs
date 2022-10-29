@@ -23,11 +23,12 @@ pub struct MyEguiApp {
     time_left: f32,
     is_running: bool,
     score: i32,
+    high_score: i32,
 }
 
 const POINTS_ON_CORRECT: i32 = 1;
 const POINTS_ON_MISTAKE: i32 = -3;
-const SECONDS_PER_GAME: i64 = 60;
+const SECONDS_PER_GAME: i64 = 5;
 
 const FONT_SIZE_HEADING: f32 = 48.0;
 const FONT_SIZE_NORMAL: f32 = 32.0;
@@ -51,7 +52,11 @@ impl MyEguiApp {
         // Mutate global style with above changes
         cc.egui_ctx.set_style(style);
 
-        Self::default()
+        if let Some(storage) = cc.storage {
+            eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
+        } else {
+            Self::default()
+        }
     }
 
     fn handle_answer(&mut self, note: Note) {
@@ -102,6 +107,9 @@ impl MyEguiApp {
         };
 
         self.is_running = self.time_left > 0.0;
+        if !self.is_running {
+            self.high_score = std::cmp::max(self.score, self.high_score);
+        }
     }
 }
 
@@ -129,8 +137,11 @@ impl eframe::App for MyEguiApp {
             {
                 self.status = "Starting...".to_string();
                 self.start = Some(Local::now());
+                self.score = 0;
                 self.next_note();
                 self.is_running = true;
+            } else {
+                ui.label(format!("Highscore: {}", self.high_score));
             }
         });
 
