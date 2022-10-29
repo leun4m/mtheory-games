@@ -28,7 +28,7 @@ pub struct MyEguiApp {
 
 const POINTS_ON_CORRECT: i32 = 1;
 const POINTS_ON_MISTAKE: i32 = -3;
-const SECONDS_PER_GAME: i64 = 5;
+const SECONDS_PER_GAME: i64 = 60;
 
 const FONT_SIZE_HEADING: f32 = 48.0;
 const FONT_SIZE_NORMAL: f32 = 32.0;
