@@ -10,10 +10,8 @@ use rand::{
     distributions::WeightedIndex, prelude::Distribution, rngs::ThreadRng, seq::SliceRandom,
 };
 
-/// We derive Deserialize/Serialize so we can persist app state on shutdown.
-#[derive(serde::Deserialize, serde::Serialize)]
-#[serde(default)] // if we add new fields, give them default values when deserializing old state
-#[derive(Default)]
+#[derive(serde::Deserialize, serde::Serialize, Default, PartialEq, PartialOrd)]
+#[serde(default)]
 pub struct MyEguiApp {
     status: String,
     key: Note,
@@ -91,7 +89,8 @@ impl MyEguiApp {
     fn calc_time(&mut self) {
         self.time_left = if let Some(start) = self.start {
             let aim = start + Duration::seconds(SECONDS_PER_GAME);
-            (aim.timestamp_millis() - Local::now().timestamp_millis()) as f32 / (SECONDS_PER_GAME as f32 * 1000.0)
+            (aim.timestamp_millis() - Local::now().timestamp_millis()) as f32
+                / (SECONDS_PER_GAME as f32 * 1000.0)
         } else {
             0.0
         };
