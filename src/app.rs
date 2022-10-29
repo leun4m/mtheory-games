@@ -85,7 +85,7 @@ impl MyEguiApp {
     }
 
     fn add_option_button(&mut self, ui: &mut Ui, id: usize) {
-        const BUTTON_SIZE: [f32; 2] = [100.0, 50.0];
+        const BUTTON_SIZE: [f32; 2] = [80.0, 80.0];
         if ui
             .add_sized(
                 BUTTON_SIZE,
