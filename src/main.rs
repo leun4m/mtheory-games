@@ -1,4 +1,4 @@
-#![warn(clippy::all, rust_2018_idioms)]
+#![warn(clippy::all)]
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // hide console window on Windows in release
 
 // When compiling natively:
@@ -9,9 +9,9 @@ fn main() {
 
     let native_options = eframe::NativeOptions::default();
     eframe::run_native(
-        "eframe template",
+        "mTheory Games",
         native_options,
-        Box::new(|cc| Box::new(eframe_template::MyEguiApp::new(cc))),
+        Box::new(|cc| Box::new(mtheory_games::MyEguiApp::new(cc))),
     );
 }
 
@@ -28,7 +28,7 @@ fn main() {
     eframe::start_web(
         "the_canvas_id", // hardcode it
         web_options,
-        Box::new(|cc| Box::new(eframe_template::MyEguiApp::new(cc))),
+        Box::new(|cc| Box::new(mtheory_games::MyEguiApp::new(cc))),
     )
     .expect("failed to start eframe");
 }
