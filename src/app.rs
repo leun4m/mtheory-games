@@ -91,7 +91,7 @@ impl MyEguiApp {
     fn calc_time(&mut self) {
         self.time_left = if let Some(start) = self.start {
             let aim = start + Duration::seconds(SECONDS_PER_GAME);
-            (aim.timestamp() - Local::now().timestamp()) as f32 / SECONDS_PER_GAME as f32
+            (aim.timestamp_millis() - Local::now().timestamp_millis()) as f32 / (SECONDS_PER_GAME as f32 * 1000.0)
         } else {
             0.0
         };
@@ -110,7 +110,7 @@ impl eframe::App for MyEguiApp {
             ui.label(&self.status);
 
             if self.is_running {
-                ui.add(ProgressBar::new(self.time_left).animate(true));
+                ui.add(ProgressBar::new(self.time_left));
                 ui.label(format!("Key: {}", self.key));
                 ui.label(format!("Step {}", self.step));
                 ui.horizontal(|ui| {
@@ -126,6 +126,8 @@ impl eframe::App for MyEguiApp {
                 self.is_running = true;
             }
         });
+
+        ctx.request_repaint();
     }
 }
 
