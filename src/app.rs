@@ -29,22 +29,28 @@ const POINTS_ON_CORRECT: i32 = 1;
 const POINTS_ON_MISTAKE: i32 = -3;
 const SECONDS_PER_GAME: i64 = 60;
 
+const FONT_SIZE_HEADING: f32 = 48.0;
+const FONT_SIZE_NORMAL: f32 = 32.0;
+const FONT_SIZE_SMALL: f32 = 24.0;
+
 impl MyEguiApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
-        if let Some(storage) = cc.storage {
-            return eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default();
-        }
+        // Get current context style
+        let mut style = (*cc.egui_ctx.style()).clone();
 
-        let ctx = egui::Context::default();
-        let mut style: egui::Style = (*ctx.style()).clone();
+        // Redefine text_styles
         style.text_styles = [
-            (Heading, FontId::new(30.0, Proportional)),
-            (Body, FontId::new(24.0, Proportional)),
-            (Button, FontId::new(24.0, Proportional)),
+            (Heading, FontId::new(FONT_SIZE_HEADING, Proportional)),
+            (Body, FontId::new(FONT_SIZE_NORMAL, Proportional)),
+            (Monospace, FontId::new(FONT_SIZE_NORMAL, Proportional)),
+            (Button, FontId::new(FONT_SIZE_NORMAL, Proportional)),
+            (Small, FontId::new(FONT_SIZE_SMALL, Proportional)),
         ]
         .into();
 
+        // Mutate global style with above changes
         cc.egui_ctx.set_style(style);
+
         Self::default()
     }
 
@@ -74,7 +80,7 @@ impl MyEguiApp {
     }
 
     fn add_option_button(&mut self, ui: &mut Ui, id: usize) {
-        const BUTTON_SIZE: [f32; 2] = [80.0, 40.0];
+        const BUTTON_SIZE: [f32; 2] = [100.0, 50.0];
         if ui
             .add_sized(
                 BUTTON_SIZE,
@@ -106,19 +112,21 @@ impl eframe::App for MyEguiApp {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.heading("mTheory Quiz!");
             ui.label(format!("Score: {}", self.score));
-            ui.label(&self.status);
+            ui.small(&self.status);
 
             if self.is_running {
                 ui.add(ProgressBar::new(self.time_left));
-                ui.label(format!("Key: {}", self.key));
-                ui.label(format!("Step {}", self.step));
+                ui.label(format!("Key: {} - Scale Step: {}", self.key, self.step));
                 ui.horizontal(|ui| {
                     self.add_option_button(ui, 0);
                     self.add_option_button(ui, 1);
                     self.add_option_button(ui, 2);
                     self.add_option_button(ui, 3);
                 });
-            } else if ui.button("Start").clicked() {
+            } else if ui
+                .add_sized([100.0, 50.0], egui::Button::new("Start"))
+                .clicked()
+            {
                 self.status = "Starting...".to_string();
                 self.start = Some(Local::now());
                 self.next_note();
