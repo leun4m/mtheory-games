@@ -1,17 +1,22 @@
 use std::fmt::Display;
 
 #[derive(
-    Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Default, serde::Deserialize, serde::Serialize,
+    Copy, Clone, PartialEq, Eq, PartialOrd, Ord, serde::Deserialize, serde::Serialize,
 )]
 pub enum BaseNote {
     A,
     B,
-    #[default]
     C,
     D,
     E,
     F,
     G,
+}
+
+impl Default for BaseNote {
+    fn default() -> Self {
+        BaseNote::C
+    }
 }
 
 impl Display for BaseNote {
@@ -33,13 +38,18 @@ impl Display for BaseNote {
 }
 
 #[derive(
-    Copy, Clone, PartialEq, Eq, PartialOrd, Ord, Default, serde::Deserialize, serde::Serialize,
+    Copy, Clone, PartialEq, Eq, PartialOrd, Ord, serde::Deserialize, serde::Serialize,
 )]
 pub enum Modifier {
-    #[default]
     None,
     Sharp,
     Flat,
+}
+
+impl Default for Modifier {
+    fn default() -> Self {
+        Modifier::None
+    }
 }
 
 impl Display for Modifier {
