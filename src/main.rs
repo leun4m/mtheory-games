@@ -11,7 +11,7 @@ fn main() {
     eframe::run_native(
         "mTheory Games",
         native_options,
-        Box::new(|cc| Box::new(mtheory_games::MyEguiApp::new(cc))),
+        Box::new(|cc| Box::new(mtheory_games::RootApp::new(cc))),
     );
 }
 
@@ -28,7 +28,7 @@ fn main() {
     eframe::start_web(
         "the_canvas_id", // hardcode it
         web_options,
-        Box::new(|cc| Box::new(mtheory_games::MyEguiApp::new(cc))),
+        Box::new(|cc| Box::new(mtheory_games::RootApp::new(cc))),
     )
     .expect("failed to start eframe");
 }

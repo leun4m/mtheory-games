@@ -5,12 +5,12 @@ use egui_extras::RetainedImage;
 
 use crate::scales_trainer::ScaleTrainer;
 
-pub struct MyEguiApp {
+pub struct RootApp {
     image: RetainedImage,
     scales_trainer: ScaleTrainer,
 }
 
-impl Default for MyEguiApp {
+impl Default for RootApp {
     fn default() -> Self {
         let image_data_bkg = include_bytes!("../assets/logo.svg");
         let image = RetainedImage::from_svg_bytes("logo", image_data_bkg).unwrap();
@@ -25,7 +25,7 @@ const FONT_SIZE_HEADING: f32 = 48.0;
 const FONT_SIZE_NORMAL: f32 = 32.0;
 const FONT_SIZE_SMALL: f32 = 24.0;
 
-impl MyEguiApp {
+impl RootApp {
     pub fn new(cc: &eframe::CreationContext<'_>) -> Self {
         // Get current context style
         let mut style = (*cc.egui_ctx.style()).clone();
@@ -47,7 +47,7 @@ impl MyEguiApp {
     }
 }
 
-impl eframe::App for MyEguiApp {
+impl eframe::App for RootApp {
     fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
         egui::TopBottomPanel::top("header").show(ctx, |ui| {
             ui.horizontal(|ui| {
