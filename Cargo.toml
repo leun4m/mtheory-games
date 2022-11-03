@@ -8,6 +8,7 @@ edition = "2021"
 
 [dependencies]
 egui = "0.19.0"
+egui_extras = { version = "0.19.0", features = ["svg"] }
 eframe = { version = "0.19.0", features = ["persistence"] }
 serde = { version = "1", features = ["derive"] } # You only need this if you want app persistence
 rand = "0.8.5"

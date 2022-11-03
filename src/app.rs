@@ -6,13 +6,17 @@ use chrono::{DateTime, Duration, Local};
 use egui::FontFamily::Proportional;
 use egui::{FontId, Ui};
 use egui::{ProgressBar, TextStyle::*};
+use egui_extras::RetainedImage;
 use rand::{
     distributions::WeightedIndex, prelude::Distribution, rngs::ThreadRng, seq::SliceRandom,
 };
 
-#[derive(serde::Deserialize, serde::Serialize, Default, PartialEq, PartialOrd)]
-#[serde(default)]
+// #[derive(serde::Deserialize, serde::Serialize)]
+// #[derive(Default)]
+// #[derive(PartialEq, PartialOrd)]
+// #[serde(default)]
 pub struct MyEguiApp {
+    image: RetainedImage,
     status: String,
     key: Note,
     correct_answer: Note,
@@ -24,6 +28,27 @@ pub struct MyEguiApp {
     is_running: bool,
     score: i32,
     high_score: i32,
+}
+
+impl Default for MyEguiApp {
+    fn default() -> Self {
+        let image_data_bkg = include_bytes!("../assets/logo.svg");
+        let image = RetainedImage::from_svg_bytes("logo", image_data_bkg).unwrap();
+        Self {
+            image,
+            status: Default::default(),
+            key: Default::default(),
+            correct_answer: Default::default(),
+            step: Default::default(),
+            scale: Default::default(),
+            option: Default::default(),
+            start: Default::default(),
+            time_left: Default::default(),
+            is_running: Default::default(),
+            score: Default::default(),
+            high_score: Default::default(),
+        }
+    }
 }
 
 const POINTS_ON_CORRECT: i32 = 1;
@@ -52,11 +77,11 @@ impl MyEguiApp {
         // Mutate global style with above changes
         cc.egui_ctx.set_style(style);
 
-        if let Some(storage) = cc.storage {
-            eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
-        } else {
-            Self::default()
-        }
+        // if let Some(storage) = cc.storage {
+        //     eframe::get_value(storage, eframe::APP_KEY).unwrap_or_default()
+        // } else {
+        Self::default()
+        // }
     }
 
     fn handle_answer(&mut self, note: Note) {
@@ -118,7 +143,8 @@ impl eframe::App for MyEguiApp {
         self.calc_time();
 
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("mTheory Quiz!");
+            self.image.show_max_size(ui, egui::vec2(320.0, 160.0));
+            ui.small("The Trainer");
             ui.label(format!("Score: {}", self.score));
             ui.small(&self.status);
 
