@@ -1,8 +1,13 @@
-use chrono::{DateTime, Local, Duration};
+use chrono::{DateTime, Duration, Local};
 use egui::{ProgressBar, Ui};
-use rand::{rngs::ThreadRng, distributions::WeightedIndex, prelude::Distribution, seq::SliceRandom};
+use rand::{
+    distributions::WeightedIndex, prelude::Distribution, rngs::ThreadRng, seq::SliceRandom,
+};
 
-use crate::note::{Note, ScaleStep, Scale, ALL_SCALES_WEIGHTED, SCALE_STEPS_WEIGHTS, ALL_SCALES, ALL_SCALE_STEPS, ALL_NOTES};
+use crate::note::{
+    Note, Scale, ScaleStep, ALL_NOTES, ALL_SCALES, ALL_SCALES_WEIGHTED, ALL_SCALE_STEPS,
+    SCALE_STEPS_WEIGHTS,
+};
 
 const POINTS_ON_CORRECT: i32 = 1;
 const POINTS_ON_MISTAKE: i32 = -3;
@@ -22,7 +27,6 @@ pub struct ScaleTrainer {
     score: i32,
     high_score: i32,
 }
-
 
 impl ScaleTrainer {
     fn handle_answer(&mut self, note: Note) {
@@ -109,7 +113,6 @@ impl ScaleTrainer {
 
         ctx.request_repaint();
     }
-
 }
 
 fn random_scale(rng: &mut ThreadRng) -> Scale {
