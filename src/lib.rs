@@ -2,4 +2,5 @@
 
 mod app;
 mod note;
+mod scales_trainer;
 pub use app::MyEguiApp;
